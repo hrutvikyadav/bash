@@ -64,7 +64,7 @@ ___
 
 1. echo
 
-    prints out to terminal
+    prints out to terminal through _stdout_ or _stderr_[^op-types]
 
     U
 
@@ -73,14 +73,28 @@ ___
     hello terminal
     ```
 
-    print to a file instead of the terminal by specifying the filename
+    _redirect_ `echo`'s output to a file instead of printing to terminal by specifying the filename to
+    > `>` or `1>` to _create or overwrite_ file with __stdout__'s content\
+    > `2>` to do the same with __stderr__'s contents
+    > `>>` to _append_ to existing file\
+    If the _left side of `>` is __empty__,_ it will overwrite the file with empty contents
+    Note:
+    - stdout and stderr point to terminal by default, and stdin points to keyboard by default[^ip-types]
+    - _redirect_ __stdin with `<` and stderr, stdin with `>`__\
+    - redirecting will make std* point to filename instead
 
     ```bash
-    echo this will be written to README.md >> README.md
+    # print output to file instead of default(terminal)
+    echo "this will be written to existing README.md" >> README.md
     ```
 
     > use `-e` flag to insert _escape sequences_\
     > for this to work correctly, enclose entire value in quotes
+
+    ```bash
+    # read from file instead of default i.e. keyboard
+    read NAME < examplefile.txt
+    ```
 
 2. pwd
 
@@ -255,6 +269,43 @@ ___
     then
         echo true
     fi   
+    ```
+
+14. `|` pipe character
+
+    used to pipe _output of one command_ to _input of another command_\
+    `<command1> | <command2>`
+    i.e __1st command's stdout__ is __2nd command's stdin__
+
+    ```bash
+    $ echo "my_name" | read NAME
+    ```
+
+    > NAME will be set to "my_name" but this _mutation_ happens in a __subshell or subprocess__ and __not__ in the shell you are currently in\
+    > So the __variables in current shell will not be affected__
+
+15. cat
+
+    read from stdin[^ip-types] and print to stdout[^op-types]
+    > use redirection to specify ip/op\
+    > provide filename or other input(eg. strings) as options
+
+    ```bash
+    $ cat filename.txt
+    # contents of file
+    ```
+
+16. wx
+
+    print word count information about file- newline, word, and byte counts for each file
+
+    ```bash
+    $ wc file.txt
+      588  1794 11726 README.md
+
+    # print only lines in file
+    $ wc file.txt -l
+    592 README.md
     ```
 
 ___
@@ -533,3 +584,10 @@ ANOTHER_FN 9
 ```
 
 above function will print out 9
+
+___
+
+## Footnotes
+
+[^ip-types]: stdin-by-default-*readsfrom*keyboard
+[^op-types]: there are 2 types of outputs- stdout and stderr, both *print to* terminal by default. Valid/successful commands will print to stdout, whereas invalid/unsuccessful commands will print to stderr
