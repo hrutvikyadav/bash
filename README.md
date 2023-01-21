@@ -295,19 +295,51 @@ ___
     # contents of file
     ```
 
-16. wx
+16. wc
 
     print word count information about file- newline, word, and byte counts for each file
 
     ```bash
     $ wc file.txt
+    # shows the word line and character count
       588  1794 11726 README.md
 
     # print only lines in file
     $ wc file.txt -l
     592 README.md
     ```
+    above output displays byte count inplace of character count
+    > they are not the same, try `$ wc -m`\
+    > some characters could be more than one byte
+    __Input to a command can affect it's output__
 
+17. grep
+
+    _search_ for __patterns__ in text with `grep '<pattern>' <filename>`
+    
+    ```bash
+    $ grep 'thisword' examplefile.txt
+    # prints all lines that include _pattern_[^grep pattern]
+    ```
+    
+    > useful flags: `--color`, `-n`, `-c`, `-o`
+    
+18. sed
+
+    search a pattern and replace it with some other string with `sed 's/<search for pattern>/<replace with>/<regex flags>' <filename>`
+    > this won't replace text by default, _prints to terminal instead_
+    
+    ```bash
+    # using file to search
+    $ sed 's/[0-9]/1/' numbers.txt
+    # replaces digits 0-9 with 1 in file
+    
+    # use output from other commands
+    $ grep -n 'hello[a-z]*' greetings.txt | sed 's/[0-9]+/1/' -E
+    # grep will print "1:hello..." to stdout, this is piped to sed input, which will replace digits 0-9 with 1
+    ```
+    
+    > flags `-E` to recognize all regex
 ___
 
 ## Scripts
@@ -591,3 +623,4 @@ ___
 
 [^ip-types]: stdin-by-default-*readsfrom*keyboard
 [^op-types]: there are 2 types of outputs- stdout and stderr, both *print to* terminal by default. Valid/successful commands will print to stdout, whereas invalid/unsuccessful commands will print to stderr
+[^grep pattern]: string or RegExp
