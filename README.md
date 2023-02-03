@@ -340,7 +340,7 @@ ___
     ```
     
     > flags `-E` to recognize all regex
-17. ps
+19. ps
 
     Used to see running processes in current shell\
     __Works differently based on what preceeds the options(`-e` and `e` or `--e` is diff)__
@@ -443,7 +443,7 @@ ___
     node
     ```
 
-18. nproc
+20. nproc
 
     See processesing units available to __system__/__current process__
 
@@ -452,7 +452,7 @@ ___
     16
     ```
 
-19. ulimit
+21. ulimit
 
     Used to display, allocate, and limit resources
     Limits can be enforced at _**global**, **group**, and **user** levels_
@@ -461,60 +461,60 @@ ___
 
     User can edit their own limits within allowed tresholds(`soft-limit` to `hard limit`)
 
-```bash
-# dislay limits for user
-# defaults to current user if no user specified
-$ ulimit -a
-core file size          (blocks, -c) 0
-data seg size           (kbytes, -d) unlimited
-scheduling priority             (-e) 0
-file size               (blocks, -f) unlimited
-pending signals                 (-i) 63442
-max locked memory       (kbytes, -l) 64
-max memory size         (kbytes, -m) unlimited
-open files                      (-n) 1024
-pipe size            (512 bytes, -p) 8
-POSIX message queues     (bytes, -q) 819200
-real-time priority              (-r) 0
-stack size              (kbytes, -s) 8192
-cpu time               (seconds, -t) unlimited
-max user processes              (-u) 63442
-virtual memory          (kbytes, -v) unlimited
-file locks                      (-x) unlimited
+    ```bash
+    # dislay limits for user
+    # defaults to current user if no user specified
+    $ ulimit -a
+    core file size          (blocks, -c) 0
+    data seg size           (kbytes, -d) unlimited
+    scheduling priority             (-e) 0
+    file size               (blocks, -f) unlimited
+    pending signals                 (-i) 63442
+    max locked memory       (kbytes, -l) 64
+    max memory size         (kbytes, -m) unlimited
+    open files                      (-n) 1024
+    pipe size            (512 bytes, -p) 8
+    POSIX message queues     (bytes, -q) 819200
+    real-time priority              (-r) 0
+    stack size              (kbytes, -s) 8192
+    cpu time               (seconds, -t) unlimited
+    max user processes              (-u) 63442
+    virtual memory          (kbytes, -v) unlimited
+    file locks                      (-x) unlimited
 
-# associated flag for changing limits is also pronited above
-# use `-H` or `-S` to display hard and soft limits
-# or use in combination with above output to get specific limits
+    # associated flag for changing limits is also pronited above
+    # use `-H` or `-S` to display hard and soft limits
+    # or use in combination with above output to get specific limits
 
-$ ulimit -Ss
-8192
-# prints soft limit for stack size
+    $ ulimit -Ss
+    8192
+    # prints soft limit for stack size
 
-$ ulimit -s 8190
-# change temporarily for current shell instance
-```
+    $ ulimit -s 8190
+    # change temporarily for current shell instance
+    ```
 
-> To make changes permanent, change the security config file as root
-> add 4 fields to the file- `domain`, `type`, `item`, `value`
-> Ex> Set hard limit for processors for user_name_X
-> `user_name_X hard nproc 4`
+    > To make changes permanent, change the security config file as root
+    > add 4 fields to the file- `domain`, `type`, `item`, `value`
+    > Ex> Set hard limit for processors for user_name_X
+    > `user_name_X hard nproc 4`
 
-```bash
-user_name_X@PC:~$ su
-Password:
+    ```bash
+    user_name_X@PC:~$ su
+    Password:
 
-root@PC:/home/user_name_X# nano /etc/security/limits.conf
-root@PC:/home/user_name_X# exit
-user_name_X@PC:~$ ulimit -u
-3xxx
-```
+    root@PC:/home/user_name_X# nano /etc/security/limits.conf
+    root@PC:/home/user_name_X# exit
+    user_name_X@PC:~$ ulimit -u
+    3xxx
+    ```
 
-_Reference for possible items to change:_
+    _Reference for possible items to change:_
 
-| item | changes it will make |
-| :---: | :---:|
-core | limits core file size(KB)
-data | set max data size(KB)
+    | item | changes it will make |
+    | :---: | :---:|
+    core | limits core file size(KB)
+    data | set max data size(KB)
 
 ___
 
