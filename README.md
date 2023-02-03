@@ -340,6 +340,182 @@ ___
     ```
     
     > flags `-E` to recognize all regex
+17. ps
+
+    Used to see running processes in current shell\
+    __Works differently based on what preceeds the options(`-e` and `e` or `--e` is diff)__
+
+    Use with options for useful info
+    > Common: `-aux`, `-efjH`\
+    > `grep` the output of these flags to find more details about specific commands or similar things
+
+    ```bash
+    $ ps
+    PID TTY          TIME CMD
+        9 pts/0    00:00:00 bash
+    144 pts/0    00:00:00 ps
+
+    # use `-x` to see processes from current and other shells,
+    # `-u` to show associated user, CPU and memory consumption(VSZ=total_alloted_mem, RSS=currently_consumed_mem_in_RAM) etc
+    # `-a` to processes for all users
+    $ ps -aux
+    USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+    root         1  0.0  0.0   1804  1184 ?        Sl   09:35   0:00 /init
+    root         7  0.0  0.0   1812    84 ?        Ss   09:35   0:00 /init
+    root         8  0.0  0.0   1812    92 ?        R    09:35   0:00 /init
+    hrutvik_     9  0.0  0.0  10188  5056 pts/0    Ss   09:35   0:00 -bash
+    hrutvik_   147  0.0  0.0  10856  3320 pts/0    R+   09:45   0:00 ps -aux
+
+    # an alternative to this is `-e`
+    # combine with `-f` to get full listing of commands,
+    # `-H` to get a tree view with parent and child processes
+    $ ps -efH
+    UID        PID  PPID  C STIME TTY          TIME CMD
+    root         1     0  0 09:35 ?        00:00:00 /init
+    root         7     1  0 09:35 ?        00:00:00   /init
+    root         8     7  0 09:35 ?        00:00:00     /init
+    hrutvik_     9     8  0 09:35 pts/0    00:00:00       -bash
+    hrutvik_  2484     9  0 10:31 pts/0    00:00:00         ps -efH
+    root       149     1  0 09:59 ?        00:00:00   /init
+    root       150   149  0 09:59 ?        00:00:00     /init
+    hrutvik_   151   150  0 09:59 pts/1    00:00:00       -bash
+    hrutvik_   688   151  0 10:16 pts/1    00:00:00         git show
+    hrutvik_   689   688  0 10:16 pts/1    00:00:00           /usr/bin/pager
+
+    # `-j` also shows PGID and SID
+    ```
+
+    > `grep` the output- search and find specific processes
+
+    - See processes run by `user`
+
+        ```bash
+        $ ps -U root
+        PID TTY          TIME CMD
+            1 ?        00:00:00 init
+            7 ?        00:00:00 init
+            8 ?        00:00:00 init
+        149 ?        00:00:00 init
+        150 ?        00:00:00 init
+        297 ?        00:00:00 init
+        ```
+
+    - Or `group`_group-name or id_
+
+        ```bash
+        $ ps -G 0
+        PID TTY          TIME CMD
+            1 ?        00:00:00 init
+            7 ?        00:00:00 init
+            8 ?        00:00:00 init
+        149 ?        00:00:00 init
+        150 ?        00:00:00 init
+        297 ?        00:00:00 init
+        298 ?        00:00:00 init
+        ```
+
+    Get `occurences` and `PID`'s of a __program__ i.e. _process that is run by executing a command like `apt`_
+    Usually to kill a program, find it's PID and run `kill` command
+
+    ```bash
+    $ ps -C bash
+    PID TTY          TIME CMD
+        9 pts/0    00:00:00 bash
+    151 pts/1    00:00:00 bash
+    2095 pts/9    00:00:00 bash
+
+    ```
+
+    Find information about a process `PID` with `ps -p PID1,PID2,PID3`\
+    _when using a list as parameters, don't use spaces_
+    use `-o comm=` to output the `command` associated with the `PID`
+
+    ```bash
+    $ ps -p 151
+    PID TTY          TIME CMD
+    151 pts/1    00:00:00 bash
+    
+    $ ps -p 151 -o comm=
+    bash
+
+    $ ps -p 151,1999 -o comm=
+    bash
+    node
+    ```
+
+18. nproc
+
+    See processesing units available to __system__/__current process__
+
+    ```bash
+    $ nproc
+    16
+    ```
+
+19. ulimit
+
+    Used to display, allocate, and limit resources
+    Limits can be enforced at _**global**, **group**, and **user** levels_
+
+    Ulimit is linked to security config file[^sc] and allows us to edit this file quickly
+
+    User can edit their own limits within allowed tresholds(`soft-limit` to `hard limit`)
+
+```bash
+# dislay limits for user
+# defaults to current user if no user specified
+$ ulimit -a
+core file size          (blocks, -c) 0
+data seg size           (kbytes, -d) unlimited
+scheduling priority             (-e) 0
+file size               (blocks, -f) unlimited
+pending signals                 (-i) 63442
+max locked memory       (kbytes, -l) 64
+max memory size         (kbytes, -m) unlimited
+open files                      (-n) 1024
+pipe size            (512 bytes, -p) 8
+POSIX message queues     (bytes, -q) 819200
+real-time priority              (-r) 0
+stack size              (kbytes, -s) 8192
+cpu time               (seconds, -t) unlimited
+max user processes              (-u) 63442
+virtual memory          (kbytes, -v) unlimited
+file locks                      (-x) unlimited
+
+# associated flag for changing limits is also pronited above
+# use `-H` or `-S` to display hard and soft limits
+# or use in combination with above output to get specific limits
+
+$ ulimit -Ss
+8192
+# prints soft limit for stack size
+
+$ ulimit -s 8190
+# change temporarily for current shell instance
+```
+
+> To make changes permanent, change the security config file as root
+> add 4 fields to the file- `domain`, `type`, `item`, `value`
+> Ex> Set hard limit for processors for user_name_X
+> `user_name_X hard nproc 4`
+
+```bash
+user_name_X@PC:~$ su
+Password:
+
+root@PC:/home/user_name_X# nano /etc/security/limits.conf
+root@PC:/home/user_name_X# exit
+user_name_X@PC:~$ ulimit -u
+3xxx
+```
+
+_Reference for possible items to change:_
+
+| item | changes it will make |
+| :---: | :---:|
+core | limits core file size(KB)
+data | set max data size(KB)
+
 ___
 
 ## Scripts
